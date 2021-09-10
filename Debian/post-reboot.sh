@@ -13,9 +13,9 @@ set -e
 set -u
 set -x
 
-
+# "${ROOT_POOL_NAME}"/home/root
 # 6.6 Create a user account:
-zfs create rpool/home/$YOURUSERNAME
+zfs create "${ROOT_POOL_NAME}"/home/$YOURUSERNAME
 adduser $YOURUSERNAME
 cp -a /etc/skel/.[!.]* /home/$YOURUSERNAME
 chown -R $YOURUSERNAME:$YOURUSERNAME /home/$YOURUSERNAME
@@ -26,11 +26,11 @@ usermod -a -G audio,cdrom,dip,floppy,netdev,plugdev,sudo,video $YOURUSERNAME
 zfs create -V 16G -b $(getconf PAGESIZE) -o compression=zle \
       -o logbias=throughput -o sync=always \
       -o primarycache=metadata -o secondarycache=none \
-      -o com.sun:auto-snapshot=false rpool/swap
+      -o com.sun:auto-snapshot=false "${ROOT_POOL_NAME}"/swap
 
 # 7.2 Configure the swap device
-mkswap -f /dev/zvol/rpool/swap
-echo /dev/zvol/rpool/swap none swap defaults 0 0 >> /etc/fstab
+mkswap -f /dev/zvol/"\${ROOT_POOL_NAME}"/swap
+echo /dev/zvol/"\${ROOT_POOL_NAME}"/swap none swap defaults 0 0 >> /etc/fstab
 #echo RESUME=none > /etc/initramfs-tools/conf.d/resume
 
 # 7.3 Enable the swap device
@@ -50,4 +50,3 @@ done
 apt install --yes openssh-server
 
 echo reboot and review Final Cleanup in the reference document
-
