@@ -99,6 +99,10 @@ if [ "$INSTALL_TYPE" == "whole_disk" ];then
 elif [ "$INSTALL_TYPE" == "use_partitions" ];then
     echo "using $ROOT_PART for root partition"
     echo "using $BOOT_PART for boot partition"
+    
+    dd if=/dev/zero of="$ROOT_PART" bs=512k count=1 conv=notrunc
+    dd if=/dev/zero of="$BOOT_PART" bs=512k count=1 conv=notrunc
+    
     wipefs -a "$ROOT_PART"  # useful if the partition already had ZFS pools
     wipefs -a "$BOOT_PART"  # useful if the partition already had ZFS pools
     echo "using $EFI_PART for EFI partition"
